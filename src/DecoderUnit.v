@@ -7,6 +7,8 @@ module DecoderUnit
     output  [2**LEN-1:0] Sal 
 );
 
-assign Sal = {2**LEN{1'b1}} << Dir;
+localparam [2**LEN-1:0]ONE = 'b1;
+
+assign Sal = ONE << Dir;
 
 endmodule

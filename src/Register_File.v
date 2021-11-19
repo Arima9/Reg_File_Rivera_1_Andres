@@ -17,21 +17,22 @@ module Register_File
 );
 
 wire [2**ADDR-1:0] DecEnables;
-wire [N-1:0]  Words [2**ADDR-1:0];
+wire [(2**ADDR)*N-1:0] Words;
 
 genvar i;
 generate
     for(i = 0; i < 2**ADDR; i = i + 1) begin: REG
         if (i == 0)
-            RegisterUnit R(.clk(clk), .rst(reset), .en(Reg_Write_i & DecEnables[i]), .D({N{1'b0}}), .Q(Words[i]));
+            RegisterUnit #(.W(N)) R(.clk(clk), .rst(reset), .en(Reg_Write_i & DecEnables[i]), .D({N{1'b0}}), .Q(Words[(N-1+N*i):(0+N*i)]));
         else
-            RegisterUnit R(.clk(clk), .rst(reset), .en(Reg_Write_i & DecEnables[i]), .D(Write_Data_i), .Q(Words[i]));
+            RegisterUnit #(.W(N)) R(.clk(clk), .rst(reset), .en(Reg_Write_i & DecEnables[i]), .D(Write_Data_i), .Q(Words[(N-1+N*i):(0+N*i)]));
     end
 endgenerate
 
 DecoderUnit #(.LEN(ADDR)) Decoder(.Dir(Write_Register_i), .Sal(DecEnables));
-MultiplexerUnit #(.W(N), .S(ADDR)) Mux0(.DATAin(Words[2**ADDR-1:0]), .Select(Read_Register_1_i), .DATAout(Read_Data_1_o));
-MultiplexerUnit #(.W(N), .S(ADDR)) Mux1(.DATAin(Words[2**ADDR-1:0]), .Select(Read_Register_2_i), .DATAout(Read_Data_2_o));
+MultiplexerUnit #(.SEL(ADDR), .WORD(N)) Mux0(.DATAin(Words),.Select(Read_Register_1_i),.DATAout(Read_Data_1_o));
+MultiplexerUnit #(.SEL(ADDR), .WORD(N)) Mux1(.DATAin(Words),.Select(Read_Register_2_i),.DATAout(Read_Data_2_o));
+
 
 
 //First Description behavioral of the RF
