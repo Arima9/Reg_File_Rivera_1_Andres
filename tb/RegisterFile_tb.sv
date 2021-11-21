@@ -22,8 +22,8 @@ task Check_RF;
 input [WORD-1:0] RF_output, RF_guide;
     
     if (RF_output != RF_guide) begin
-        $display("Ha habido un error, se esperaba %d (%b).\n Se ha encontrado en su lugar %d (%b).", RF_guide, RF_guide,
-        RF_output,RF_output);
+        $display("Ha habido un error, se esperaba %d (%b).\n Se ha encontrado en su lugar %d (%b)."
+        , RF_guide, RF_guide, RF_output,RF_output);
         $stop(1);
     end
 
@@ -93,12 +93,12 @@ RWenable_i = 1'b0;
 for (i=0; i< 2**ADDR; i++)begin
     WrData_i = testArr[i];
     WrRegAdd_i = i;
+    ReadRegAdd_1 = i;
+    ReadRegAdd_2 = i;
     #1; Mclock = ~Mclock;
     #1; Mclock = ~Mclock;
-    #1;
     Check_RF(RegDataOut_1, testArr[0]);
     Check_RF(RegDataOut_2, testArr[0]);
-    #1;
 
 end
 $display("Finished testing WriteRegister enable...");
